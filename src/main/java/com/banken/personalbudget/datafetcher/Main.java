@@ -113,9 +113,7 @@ public class Main {
     }
 
     private void createDirectory(Path pathWithFile) {
-        if (pathWithFile.getParent().toFile().mkdirs()) {
-            throw new RuntimeException("Couldn't create directory: " + pathWithFile.getParent());
-        }
+        pathWithFile.getParent().toFile().mkdirs();
     }
 
     private List<Transaction> fetchSwedbank(WebDriver driver, String personnummer) {

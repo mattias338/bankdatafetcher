@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 public class JsonFileStorage {
 
@@ -37,6 +38,12 @@ public class JsonFileStorage {
     }
 
     public Data getData() {
+        if (!dataPath.toFile().exists()) {
+            Data data = new Data();
+            data.setTransactions(new ArrayList<>());
+            return data;
+        }
+
         try {
             byte[] bytes = Files.readAllBytes(dataPath);
             String dataString = new String(bytes);
