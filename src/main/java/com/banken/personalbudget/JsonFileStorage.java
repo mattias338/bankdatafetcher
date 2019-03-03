@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-public class JsonFileStorage {
+public class JsonFileStorage implements Storage {
 
     private final Path dataPath;
     private Gson gson;
@@ -20,6 +20,7 @@ public class JsonFileStorage {
         gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
+    @Override
     public void storeData(Data data) {
         System.out.println("JsonFileStorage.storeData");
         System.out.println("data = " + data);
@@ -37,6 +38,7 @@ public class JsonFileStorage {
 
     }
 
+    @Override
     public Data getData() {
         if (!dataPath.toFile().exists()) {
             Data data = new Data();

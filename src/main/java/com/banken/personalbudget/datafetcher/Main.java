@@ -3,6 +3,7 @@ package com.banken.personalbudget.datafetcher;
 
 import com.banken.personalbudget.Common;
 import com.banken.personalbudget.JsonFileStorage;
+import com.banken.personalbudget.Storage;
 import com.banken.personalbudget.data.Data;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -40,7 +41,6 @@ public class Main {
 
         // Needed by swedbank...
         try {
-            driver.manage().window().maximize();
             driver.manage().window().setSize(new Dimension(1920, 1080));
         } catch (WebDriverException e) {
             System.out.println("e = " + e);
@@ -66,13 +66,13 @@ public class Main {
     private void doStuff(WebDriver driver) {
         List<Transaction> transactions = new ArrayList<>();
         transactions.addAll(fetchSwedbank(driver, PERSONNUMMER));
-        transactions.addAll(fetchCircleK(driver, PERSONNUMMER));
+//        transactions.addAll(fetchCircleK(driver, PERSONNUMMER));
 
 
         int numberOfTransactionsFound = transactions.size();
         System.out.println("numberOfTransactionsFound = " + numberOfTransactionsFound);
 
-        JsonFileStorage storage = new JsonFileStorage(dataPath);
+        Storage storage = new JsonFileStorage(dataPath);
         Data existingData = storage.getData();
 
         List<Transaction> newTransactions = transactions.stream().
@@ -92,7 +92,9 @@ public class Main {
     private boolean isTransactionPresent(Transaction transaction, Data existingData) {
         boolean isPresent = existingData.getTransactions().stream().
                 anyMatch(existingTransaction -> existingTransaction.sameTransactionAs(transaction));
-        System.out.println(transaction + " is present in database.");
+        if (isPresent) {
+            System.out.println(transaction + " is present in database.");
+        }
         return isPresent;
     }
 
