@@ -11,53 +11,64 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-public class EntryGridView {
-    private static final Predicate<Transaction> DEFAULT_FILTER = transaction -> !transaction.isIgnore();
+public abstract class EntryGridView {
 
     private Data data;
     private GridPane gridPane;
-    private Storer storer;
-    private Predicate<Transaction> filter = DEFAULT_FILTER;
+    private Predicate<Transaction> filter = transaction -> true;
+
+    public EntryGridView(Data data) {
+        this.data = data;
+    }
 
     public Node createView() {
-        gridPane = new GridPane();
-        gridPane.setHgap(10);
-        gridPane.setVgap(1);
+        createGrid();
 
+        addHeaders();
 
-        List<String> names = Transaction.getNames();
-        Text[] headers = names.stream().
+        addContent();
+
+        return wrapInScrollPane();
+    }
+
+    private void addContent() {
+        // rowindex 0 is for headers
+        int rowindex = 1;
+        for (Transaction transaction : data.getTransactions(filter)) {
+            List<? extends Node> nodes = getTableContentProvider().apply(transaction);
+            if (nodes == null) {
+                continue;
+            }
+            Node[] nodesArray = nodes.toArray(new Node[0]);
+            gridPane.addRow(rowindex++, nodesArray);
+        }
+    }
+
+    private void addHeaders() {
+        Text[] headers = getHeaders().stream().
                 map(Text::new).
                 toArray(Text[]::new);
         // Add headers
         gridPane.addRow(0, headers);
-
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setContent(gridPane);
-
-        return scrollPane;
     }
+
+    protected abstract List<String> getHeaders();
+
+    protected abstract Function<Transaction, List<? extends Node>> getTableContentProvider();
 
     public void setData(Data data) {
         this.data = data;
 
-        // rowindex 0 is for headers
-        int rowindex = 1;
-        for (Transaction transaction : data.getTransactions(filter)) {
-            EditEntryDialogProvider editEntryDialogProvider = new EditEntryDialogProvider();
-            editEntryDialogProvider.setStorer(storer);
-            editEntryDialogProvider.setData(data);
-            Dialog editTransactionDialog = editEntryDialogProvider.getDialog(transaction);
-            gridPane.addRow(rowindex++, convertStringsToTextArray(transaction.getValues(), editTransactionDialog));
-        }
     }
 
-    public static Text[] convertStringsToTextArray(List<String> strings, Dialog action) {
+    public static List<Text> convertStringsToTextArray(List<String> strings, Dialog action) {
         return strings.stream().
                 map(s -> createClickableText(s, action)).
-                toArray(Text[]::new);
+                collect(Collectors.toList());//toArray(Text[]::new);
     }
 
     public static Text createClickableText(String s, Dialog action) {
@@ -71,11 +82,21 @@ public class EntryGridView {
         return text;
     }
 
-    public void setStorer(Storer storer) {
-        this.storer = storer;
-    }
 
     public void setFilter(Predicate<Transaction> filter) {
         this.filter = filter;
+    }
+
+    private ScrollPane wrapInScrollPane() {
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(gridPane);
+        return scrollPane;
+    }
+
+    private void createGrid() {
+        gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(1);
+
     }
 }

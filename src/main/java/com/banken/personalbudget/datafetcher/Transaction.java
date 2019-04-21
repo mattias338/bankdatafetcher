@@ -2,7 +2,6 @@ package com.banken.personalbudget.datafetcher;
 
 import com.banken.personalbudget.Common;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,7 +9,7 @@ public class Transaction {
     public static final Transaction EMPTY = new Transaction();
     private static final String TAG_DIVIDER = "->";
 
-    private static final List<String> SAME_ACCOUNT = Arrays.asList("541256******6401", "541256******7905");
+    private static final List<String> SAME_ACCOUNT = Arrays.asList("541256******6401", "541256******7905", "541256******9618");
 
 
     static {
@@ -121,6 +120,10 @@ public class Transaction {
 
     public List<String> getValues() {
         return Arrays.asList(otherParty, transactionDate, amount, bank, accountName, owner, description, tag, "" + treatAsIncome);
+    }
+
+    public List<String> getStaticValues() {
+        return Arrays.asList(otherParty, transactionDate, amount, bank, accountName, owner);
     }
 
     public String getOtherParty() {

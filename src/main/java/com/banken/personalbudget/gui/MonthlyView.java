@@ -17,6 +17,7 @@ public class MonthlyView extends TimeSpanView {
     private Data data;
     private MonthlyViewData monthlyViewData;
     private List<TableViewLineData> tableLineData;
+    private Storer storer;
 
     public void setData(Data data) {
         this.data = data;
@@ -50,7 +51,7 @@ public class MonthlyView extends TimeSpanView {
                 amount = removeDecimalsIfDouble(amount);
                 Text text = new Text(amount);
                 if (lineData.isDataClickable()) {
-                    text.setOnMouseClicked(new TableDataMouseEventHandler(yearMonth, lineData.getHeader(), this.data));
+                    text.setOnMouseClicked(new TableDataMouseEventHandler(yearMonth, lineData.getHeader(), this.data, storer));
                 }
                 GridPane.setHalignment(text, HPos.RIGHT);
                 gridPane.add(text, column, row++);
@@ -77,5 +78,9 @@ public class MonthlyView extends TimeSpanView {
         for (String tag : allTags) {
             gridPane.add(new Text(tag), 0, row++);
         }
+    }
+
+    public void setStorer(Storer storer) {
+        this.storer = storer;
     }
 }

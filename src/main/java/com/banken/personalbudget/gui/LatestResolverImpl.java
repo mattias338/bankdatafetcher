@@ -3,23 +3,22 @@ package com.banken.personalbudget.gui;
 import com.banken.personalbudget.Common;
 import com.banken.personalbudget.datafetcher.Transaction;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
-public class AbstractLatestResolver<T> implements LatestResolver<T> {
+public class LatestResolverImpl<T> implements LatestResolver<T> {
     private final List<Transaction> transactions;
     private final Function<Transaction, T> transactionProperty;
-    private T defaulValue = null;
+    private T defaultValue = null;
 
 
-    public AbstractLatestResolver(List<Transaction> transactions, Function<Transaction, T> transactionProperty) {
+    public LatestResolverImpl(List<Transaction> transactions, Function<Transaction, T> transactionProperty) {
         this.transactions = transactions;
         this.transactionProperty = transactionProperty;
     }
 
-    public void setDefaulValue(T defaultValue) {
-        this.defaulValue = defaultValue;
+    public void setDefaultValue(T defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     @Override
@@ -27,13 +26,8 @@ public class AbstractLatestResolver<T> implements LatestResolver<T> {
         return transactions.stream().
                 filter(transaction -> transaction.getOtherParty().equals(otherParty)).
                 filter(transaction -> !Common.isEmpty(transaction.getTag())).
-                sorted(new Comparator<Transaction>() {
-                    @Override
-                    public int compare(Transaction o1, Transaction o2) {
-                        return o2.getTransactionDate().compareTo(o1.getTransactionDate());
-                    }
-                }).findFirst().
+                min((o1, o2) -> o2.getTransactionDate().compareTo(o1.getTransactionDate())).
                 map(transactionProperty).
-                orElse(defaulValue);
+                orElse(defaultValue);
     }
 }

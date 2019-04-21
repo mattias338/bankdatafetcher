@@ -25,6 +25,7 @@ public class Main {
     private Path dataPath;
     private BufferedWriter logWriter;
 
+    //    private static final String PERSONNUMMER = "";
     private static final String PERSONNUMMER = "";
 
     public static void main(String[] args) {
@@ -65,8 +66,8 @@ public class Main {
 
     private void doStuff(WebDriver driver) {
         List<Transaction> transactions = new ArrayList<>();
-        transactions.addAll(fetchSwedbank(driver, PERSONNUMMER));
-//        transactions.addAll(fetchCircleK(driver, PERSONNUMMER));
+//        transactions.addAll(fetchSwedbank(driver, PERSONNUMMER));
+        transactions.addAll(fetchCircleK(driver, PERSONNUMMER));
 
 
         int numberOfTransactionsFound = transactions.size();

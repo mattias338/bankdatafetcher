@@ -12,7 +12,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
 import java.text.DecimalFormat;
-import java.time.Instant;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,7 +31,9 @@ public class QuarterlyView extends TimeSpanView {
 
     private List<Set<YearMonth>> yearMonthsGroups = new ArrayList<>();
 
+
     private boolean combineAllCompleteMonths;
+    private Storer storer;
 
     public void setData(Data data) {
         this.data = data;
@@ -79,7 +80,7 @@ public class QuarterlyView extends TimeSpanView {
                 amount = removeDecimalsIfDouble(amount);
                 Text amountText = new Text(amount);
                 if (lineData.isDataClickable()) {
-                    amountText.setOnMouseClicked(new TableDataMouseEventHandler(yearMonthGroup, lineData.getHeader(), this.data));
+                    amountText.setOnMouseClicked(new TableDataMouseEventHandler(yearMonthGroup, lineData.getHeader(), this.data, storer));
                 }
                 GridPane.setHalignment(amountText, HPos.RIGHT);
                 gridPane.add(amountText, column, row);
@@ -151,5 +152,9 @@ public class QuarterlyView extends TimeSpanView {
         System.out.println(DF.format(0.0031));
         System.out.println(DF.format(3.1431));
         System.out.println(DF.format(3.2));
+    }
+
+    public void setStorer(Storer storer) {
+        this.storer = storer;
     }
 }

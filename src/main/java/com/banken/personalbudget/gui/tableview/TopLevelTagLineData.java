@@ -38,7 +38,7 @@ public class TopLevelTagLineData implements TableViewLineData {
                 {
                     String topLevelTag = transaction.getTopLevelTag();
                     if (topLevelTag == null) {
-                        throw new RuntimeException("Missing topLevelTag for " + transaction);
+                        return false;
                     }
                     return topLevelTag.equals(tag);
                 }).

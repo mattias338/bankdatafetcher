@@ -1,7 +1,7 @@
 package com.banken.personalbudget.gui;
 
-import com.banken.personalbudget.data.YearQuarter;
 import com.banken.personalbudget.data.Data;
+import com.banken.personalbudget.data.YearQuarter;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
@@ -18,24 +18,26 @@ public class TableDataMouseEventHandler implements EventHandler<MouseEvent> {
     private Set<YearMonth> yearMonths;
     private String topLevelTag;
     private Data data;
+    private Storer storer;
 
-    public TableDataMouseEventHandler(YearQuarter yearQuarter, String topLevelTag, Data data) {
-        this(yearQuarter.getYearMonths(), topLevelTag, data);
+    public TableDataMouseEventHandler(YearQuarter yearQuarter, String topLevelTag, Data data, Storer storer) {
+        this(yearQuarter.getYearMonths(), topLevelTag, data, storer);
     }
 
-    public TableDataMouseEventHandler(YearMonth yearMonth, String topLevelTag, Data data) {
-        this(Collections.singleton(yearMonth), topLevelTag, data);
+    public TableDataMouseEventHandler(YearMonth yearMonth, String topLevelTag, Data data, Storer storer) {
+        this(Collections.singleton(yearMonth), topLevelTag, data, storer);
     }
 
-    public TableDataMouseEventHandler(Set<YearMonth> yearMonths, String topLevelTag, Data data) {
+    public TableDataMouseEventHandler(Set<YearMonth> yearMonths, String topLevelTag, Data data, Storer storer) {
         this.yearMonths = yearMonths;
         this.topLevelTag = topLevelTag;
         this.data = data;
+        this.storer = storer;
     }
 
     @Override
     public void handle(MouseEvent event) {
-        EntryGridView entryGridView = new EntryGridView();
+        AllEntriesGridView entryGridView = new AllEntriesGridView(storer, data);
         entryGridView.setFilter(transaction -> {
             if (transaction.isIgnore()) {
                 return false;
@@ -51,8 +53,9 @@ public class TableDataMouseEventHandler implements EventHandler<MouseEvent> {
 
             return true;
         });
-        Node node = entryGridView.createView();
         entryGridView.setData(data);
+
+        Node node = entryGridView.createView();
 
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Detailed view: tag: " + topLevelTag + ", year month: " + yearMonths);

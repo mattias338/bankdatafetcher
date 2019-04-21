@@ -1,8 +1,7 @@
 package com.banken.personalbudget.gui;
 
-import com.banken.personalbudget.Common;
+import com.banken.personalbudget.Storage;
 import com.banken.personalbudget.data.Data;
-import com.banken.personalbudget.JsonFileStorage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -14,12 +13,15 @@ import javafx.scene.layout.VBox;
 
 public class MainSceneProvider {
 
-    private JsonFileStorage storage;
+    private Storage storage;
     private Data data;
     private JsonStorer jsonStorer;
 
+    public void setStorage(Storage storage) {
+        this.storage = storage;
+    }
+
     public Scene getScene() {
-        storage = new JsonFileStorage(Common.getDataPath());
         data = storage.getData();
         jsonStorer = new JsonStorer();
 
@@ -39,10 +41,8 @@ public class MainSceneProvider {
         showDataButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                EntryGridView entryGridView = new EntryGridView();
-                entryGridView.setStorer(jsonStorer);
-                bodyOfMainScene.setBody(entryGridView.createView());
-                entryGridView.setData(data);
+                AllEntriesGridView allEntriesGridView = new AllEntriesGridView(jsonStorer, data);
+                bodyOfMainScene.setBody(allEntriesGridView.createView());
             }
         });
 
@@ -57,12 +57,22 @@ public class MainSceneProvider {
             }
         });
 
+        Button finalizeNewEntriesMulti = new Button("Finalize new entries (multi)");
+        finalizeNewEntriesMulti.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                FinalizeNewEntriesMulti finalizeNewEntriesMultiView = new FinalizeNewEntriesMulti(jsonStorer, data);
+                bodyOfMainScene.setBody(finalizeNewEntriesMultiView.createView());
+            }
+        });
+
         Button monthly = new Button("Monthly");
         monthly.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 MonthlyView monthlyView = new MonthlyView();
                 monthlyView.setData(data);
+                monthlyView.setStorer(jsonStorer);
                 Node yearViewView = monthlyView.getView();
                 bodyOfMainScene.setBody(yearViewView);
             }
@@ -75,6 +85,7 @@ public class MainSceneProvider {
             public void handle(ActionEvent event) {
                 QuarterlyView quarterlyView = new QuarterlyView();
                 quarterlyView.setData(data);
+                quarterlyView.setStorer(jsonStorer);
                 Node yearViewView = quarterlyView.getView();
                 bodyOfMainScene.setBody(yearViewView);
             }
@@ -98,6 +109,7 @@ public class MainSceneProvider {
 
         top.getChildren().add(showDataButton);
         top.getChildren().add(addMissingTagsButton);
+        top.getChildren().add(finalizeNewEntriesMulti);
         top.getChildren().add(monthly);
         top.getChildren().add(quarterly);
         top.getChildren().add(arbitrarily);

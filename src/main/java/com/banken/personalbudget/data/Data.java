@@ -2,8 +2,8 @@ package com.banken.personalbudget.data;
 
 import com.banken.personalbudget.Common;
 import com.banken.personalbudget.datafetcher.Transaction;
-import com.banken.personalbudget.gui.AbstractLatestResolver;
 import com.banken.personalbudget.gui.LatestResolver;
+import com.banken.personalbudget.gui.LatestResolverImpl;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -68,8 +68,7 @@ public class Data {
 
     public List<String> getAllTags() {
         List<String> allTagsFiltered = getAllXFiltered(Transaction::getTag, transaction -> true);
-        allTagsFiltered.sort(
-                String::compareTo);
+        allTagsFiltered.sort(String::compareTo);
         return allTagsFiltered;
 
     }
@@ -110,15 +109,22 @@ public class Data {
 
     public LatestResolver<String> getLatestTagResolver() {
         LatestResolver<String> latestTagResolver =
-                new AbstractLatestResolver<>(transactions, Transaction::getTag);
+                new LatestResolverImpl<>(transactions, Transaction::getTag);
         return latestTagResolver;
     }
 
     public LatestResolver<Boolean> getLatestTreatAsIncomeResolver() {
-        AbstractLatestResolver<Boolean> latestTreatAsIncomeResolver =
-                new AbstractLatestResolver<>(transactions, Transaction::isTreatAsIncome);
-        latestTreatAsIncomeResolver.setDefaulValue(false);
+        LatestResolverImpl<Boolean> latestTreatAsIncomeResolver =
+                new LatestResolverImpl<>(transactions, Transaction::isTreatAsIncome);
+        latestTreatAsIncomeResolver.setDefaultValue(false);
         return latestTreatAsIncomeResolver;
+    }
+
+    public LatestResolverImpl<Boolean> getLatestIgnoreResolver() {
+        LatestResolverImpl<Boolean> latestIgnoreResolver =
+                new LatestResolverImpl<>(transactions, Transaction::isIgnore);
+        latestIgnoreResolver.setDefaultValue(false);
+        return latestIgnoreResolver;
     }
 
     public double getExpenseSum(Predicate<Transaction> timeInterval) {
