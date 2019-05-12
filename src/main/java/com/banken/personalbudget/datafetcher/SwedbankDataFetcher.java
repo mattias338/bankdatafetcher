@@ -46,7 +46,7 @@ public class SwedbankDataFetcher {
             goToHomeScreen();
         }
 
-        logout();
+//        logout();
 
         transactions.forEach(transaction -> transaction.setOwner(owner));
         return transactions;
@@ -117,7 +117,7 @@ public class SwedbankDataFetcher {
     }
 
     private void goToHomeScreen() {
-        String homeLinkXPath = "//*[@id=\"sidebar\"]/swed-ui-main-layout-sidebar/swed-scrollpane/div[3]/div/div/div/swed-main-menu/ul/li[1]/swed-main-menu-item/div/button";
+        String homeLinkXPath = "//*[@id=\"sidebar\"]/swed-ui-main-layout-sidebar/swed-scrollpane/div/swed-main-menu/ul/li[1]/swed-main-menu-item/div/button";
         WebElement homeLink = driver.findElement(By.xpath(homeLinkXPath));
         homeLink.click();
         waitForHomeScreen();
