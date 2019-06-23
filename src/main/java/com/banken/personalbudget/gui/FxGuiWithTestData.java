@@ -1,9 +1,11 @@
 package com.banken.personalbudget.gui;
 
+import com.banken.personalbudget.JsonFileStorage;
 import com.banken.personalbudget.Storage;
 import com.banken.personalbudget.data.Data;
 import com.banken.personalbudget.datafetcher.Transaction;
 
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -20,7 +22,7 @@ public class FxGuiWithTestData extends FxGui {
     private static class TestStorage implements Storage {
         @Override
         public void storeData(Data data) {
-
+            new JsonFileStorage(Paths.get("/home/banken/temp/data.txt")).storeData(data);
         }
 
         @Override

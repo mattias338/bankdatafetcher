@@ -65,9 +65,9 @@ public class SwedbankDataFetcher {
     }
 
     private String findAccountName() {
-        String accountNameXPath = "//*[@id=\"" + findMainId() + "\"]/ng-transclude/div/swed-accounts-account-history/swed-page/div/div/ng-transclude/sw-head/swed-hero/div/header/div[1]/ng-transclude[1]/h1";
-        WebElement accountNameElement = driver.findElement(By.xpath(accountNameXPath));
-        return accountNameElement.getText();
+        WebElement swedAccountsAccountHistory = waitAndGetElement(By.tagName("swed-accounts-account-history"));
+        WebElement h1 = swedAccountsAccountHistory.findElement(By.tagName("h1"));
+        return h1.getText();
     }
 
     private void login(String personnummer) {
@@ -81,8 +81,10 @@ public class SwedbankDataFetcher {
         WebElement userId = driver.findElement(userIdBy);
 
         userId.sendKeys(personnummer);
-        String formXpath = "//*[@id=\"layout\"]/div/div[2]/ui-view/ui-view/swed-page/div/div[2]/div/ng-transclude[1]/swed-page-region/div/div/swed-login-form/div/div/form";
-        WebElement formElement = driver.findElement(By.xpath(formXpath));
+
+//        String formXpath = "//*[@id=\"layout\"]/div/div[2]/ui-view/ui-view/swed-page/div/div[2]/div/ng-transclude[1]/swed-page-region/div/div/swed-login-form/div/div/form";
+        By formElementBy = By.tagName("swed-login-form");
+        WebElement formElement = driver.findElement(formElementBy);
         WebElement selectElement = formElement.findElement(By.tagName("select"));
         Select select = new Select(selectElement);
         select.selectByVisibleText("Mobilt BankID eller SäkerhetsID");
@@ -112,8 +114,7 @@ public class SwedbankDataFetcher {
         System.out.println("element = " + element);
         element.click();
 
-        new WebDriverWait(driver, 10).
-                until(ExpectedConditions.visibilityOfElementLocated(By.xpath(getSenasteTransaktionerXPath())));
+        waitForSenasteTransaktionerWebElement();
     }
 
     private void goToHomeScreen() {
@@ -126,7 +127,7 @@ public class SwedbankDataFetcher {
     }
 
     private void parseData() {
-        WebElement senasteTransaktionerElement = driver.findElement(By.xpath(getSenasteTransaktionerXPath()));
+        WebElement senasteTransaktionerElement = waitForSenasteTransaktionerWebElement();
         List<WebElement> senasteTransaktionerList = senasteTransaktionerElement.findElements(By.tagName("tbody"));
 
         // This list typically contain just one element
@@ -172,14 +173,13 @@ public class SwedbankDataFetcher {
     }
 
     private List<WebElement> getListOfAccounts() {
-        WebElement ulAccountListElement = driver.findElement(By.xpath(getListOfAccountsXPath()));
+        WebElement ulAccountListElement = waitForListOfAccountsWebElement();
         return ulAccountListElement.findElements(By.tagName("li"));
     }
 
     private void waitForHomeScreen() {
-        String listOfAccountsXpath = getListOfAccountsXPath();
         new WebDriverWait(driver, 60).
-                until(ExpectedConditions.visibilityOfElementLocated(By.xpath(listOfAccountsXpath)));
+                until(ExpectedConditions.visibilityOfElementLocated(By.tagName("swed-my-accounts")));
     }
 
     // In the XPath used for e.g. listOfAccounts one id is dynamic and need to be found dynamically.
@@ -200,13 +200,21 @@ public class SwedbankDataFetcher {
         return id;
     }
 
-    private String getListOfAccountsXPath() {
-        String mainId = "//*[@id=\"" + findMainId() + "\"]/ng-transclude/div/swed-page/div/div/div/ng-transclude[1]/swed-page-region[1]/div/swed-my-accounts/div/section/div/div/ul";
-        return mainId;
+    private WebElement waitForListOfAccountsWebElement() {
+        WebElement swedMyAccounts = waitAndGetElement(By.tagName("swed-my-accounts"));
+        return swedMyAccounts.findElement(By.xpath("div/section/div/div/ul"));
     }
 
-    private String getSenasteTransaktionerXPath() {
-        String senasteTransaktioner = "//*[@id=\"" + findMainId() + "\"]/ng-transclude/div/swed-accounts-account-history/swed-page/div/div/div/ng-transclude[1]/swed-page-region/div/div/section[2]/swed-account-table/div/table";
-        return senasteTransaktioner;
+    private WebElement waitForSenasteTransaktionerWebElement() {
+        WebElement swedAccountTable = waitAndGetElement(By.tagName("swed-account-table"));
+        WebElement table = swedAccountTable.findElement(By.xpath("div/table"));
+        return table;
+    }
+
+    private WebElement waitAndGetElement(By by) {
+        new WebDriverWait(driver, 10 * 60).
+                until(ExpectedConditions.visibilityOfElementLocated(by));
+        WebElement element = driver.findElement(by);
+        return element;
     }
 }
