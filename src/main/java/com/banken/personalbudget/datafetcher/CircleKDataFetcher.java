@@ -94,11 +94,16 @@ public class CircleKDataFetcher {
 
         String amount = data.get(6).getText();
         System.out.println("amount = " + amount);
-        transaction.setAmount("-" + amount);
+        String amountChangedSign = changeSign(amount);
+        transaction.setAmount(amountChangedSign);
 
         System.out.println("transaction = " + transaction);
 
         transactions.add(transaction);
+    }
+
+    private String changeSign(String amount) {
+        return amount.startsWith("-") ? amount.substring(1) : "-" + amount;
     }
 
     private void logIn(String personnummer) {
