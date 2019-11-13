@@ -73,7 +73,7 @@ public class SwedbankDataFetcher {
     private void login(String personnummer) {
         driver.get("https://online.swedbank.se/app/privat/login");
 
-        By userIdBy = By.name("userId");
+        By userIdBy = new ArbitraryAttributeBy("formcontrolname", "userId");
 
         new WebDriverWait(driver, 10).
                 until(ExpectedConditions.elementToBeClickable(userIdBy));
@@ -82,10 +82,7 @@ public class SwedbankDataFetcher {
 
         userId.sendKeys(personnummer);
 
-//        String formXpath = "//*[@id=\"layout\"]/div/div[2]/ui-view/ui-view/swed-page/div/div[2]/div/ng-transclude[1]/swed-page-region/div/div/swed-login-form/div/div/form";
-        By formElementBy = By.tagName("swed-login-form");
-        WebElement formElement = driver.findElement(formElementBy);
-        WebElement selectElement = formElement.findElement(By.tagName("select"));
+        WebElement selectElement = driver.findElement(By.tagName("select"));
         Select select = new Select(selectElement);
         select.selectByVisibleText("Mobilt BankID eller SäkerhetsID");
         selectElement.submit();
@@ -94,9 +91,10 @@ public class SwedbankDataFetcher {
     }
 
     private String findOwner() {
-        String userButtonXPath = "//*[@id=\"header\"]/swed-ui-main-layout-header/swed-page-header/div[3]/div/div[2]/swed-menu-bar/ng-transclude/swed-menu[3]/button";
-        WebElement userButton = driver.findElement(By.xpath(userButtonXPath));
-        String owner = userButton.getText();
+        By swedMenuBarBy = By.tagName("swed-menu-bar");
+        WebElement swedMenuBar = driver.findElement(swedMenuBarBy);
+        WebElement element = swedMenuBar.findElement(By.xpath("ng-transclude/swed-menu[3]/button/ng-transclude/sw-toggle/div/span"));
+        String owner = element.getText();
         return owner;
     }
 
@@ -118,8 +116,9 @@ public class SwedbankDataFetcher {
     }
 
     private void goToHomeScreen() {
-        String homeLinkXPath = "//*[@id=\"sidebar\"]/swed-ui-main-layout-sidebar/swed-scrollpane/div/swed-main-menu/ul/li[1]/swed-main-menu-item/div/button";
-        WebElement homeLink = driver.findElement(By.xpath(homeLinkXPath));
+        By sidebarBy = By.tagName("swed-ui-main-layout-sidebar");
+        WebElement sidebar = driver.findElement(sidebarBy);
+        WebElement homeLink = sidebar.findElement(By.xpath("swed-main-menu/ul/li[1]/swed-main-menu-item/div/button"));
         homeLink.click();
         waitForHomeScreen();
 
