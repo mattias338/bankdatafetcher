@@ -91,10 +91,9 @@ public class SwedbankDataFetcher {
     }
 
     private String findOwner() {
-        By swedMenuBarBy = By.tagName("swed-menu-bar");
-        WebElement swedMenuBar = driver.findElement(swedMenuBarBy);
-        WebElement element = swedMenuBar.findElement(By.xpath("ng-transclude/swed-menu[3]/button/ng-transclude/sw-toggle/div/span"));
-        String owner = element.getText();
+        By headerMenuProfile2 = By.id("header-menu-profile-2");
+        WebElement element = driver.findElement(headerMenuProfile2);
+        String owner = element.getAttribute("label");
         return owner;
     }
 
