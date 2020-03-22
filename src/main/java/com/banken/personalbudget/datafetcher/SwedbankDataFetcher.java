@@ -115,10 +115,13 @@ public class SwedbankDataFetcher {
     }
 
     private void goToHomeScreen() {
-        By sidebarBy = By.tagName("swed-ui-main-layout-sidebar");
-        WebElement sidebar = driver.findElement(sidebarBy);
-        WebElement homeLink = sidebar.findElement(By.xpath("swed-main-menu/ul/li[1]/swed-main-menu-item/div/button"));
-        homeLink.click();
+        driver.get("https://online.swedbank.se/app/ib/privat/start-page");
+//        By sidebarBy = By.tagName("swed-ui-main-layout-sidebar");
+//        WebElement sidebar = driver.findElement(sidebarBy);
+//        String homeButtonXPath = "//*[@id=\"@optionList\"]/li[1]/a";
+//        WebElement homeLink = sidebar.findElement(By.xpath("swed-main-menu/ul/li[1]/swed-main-menu-item/div/button"));
+//        WebElement homeLink = sidebar.findElement(By.xpath(homeButtonXPath));
+//        homeLink.click();
         waitForHomeScreen();
 
 
