@@ -31,6 +31,7 @@ public class ViewDataBase {
                 map(Data::getDateDate).
                 map(date -> YearMonth.from(date)).
                 distinct().
+                sorted((ym1, ym2) -> ym1.isBefore(ym2) ? -1 : 1).
                 collect(Collectors.toList());
     }
 
