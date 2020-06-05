@@ -25,8 +25,8 @@ public class Main {
     private Path dataPath;
     private BufferedWriter logWriter;
 
-    //    private static final String PERSONNUMMER = "";
-    private static final String PERSONNUMMER = "";
+//        private static final String PERSONNUMMER = "198508015461";
+private static final String PERSONNUMMER = "198404265053";
 
     public static void main(String[] args) {
         System.setProperty("webdriver.chrome.driver", "/home/banken/development/libs/seleniumstuff/chromedriver");

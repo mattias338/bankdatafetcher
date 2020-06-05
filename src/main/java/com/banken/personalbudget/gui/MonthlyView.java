@@ -4,6 +4,7 @@ import com.banken.personalbudget.data.Data;
 import com.banken.personalbudget.gui.tableview.TableViewLineData;
 import javafx.geometry.HPos;
 import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
@@ -34,10 +35,7 @@ public class MonthlyView extends TimeSpanView {
         addRowHeaderWithYearMonths(gridPane);
         fillData(gridPane);
 
-
-        return gridPane;
-
-
+        return new ScrollPane(gridPane);
     }
 
     private void fillData(GridPane gridPane) {
