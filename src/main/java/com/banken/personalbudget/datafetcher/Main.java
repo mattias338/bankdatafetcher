@@ -1,6 +1,5 @@
 package com.banken.personalbudget.datafetcher;
 
-
 import com.banken.personalbudget.Common;
 import com.banken.personalbudget.JsonFileStorage;
 import com.banken.personalbudget.Storage;
@@ -17,6 +16,8 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public class Main {
     private BufferedWriter logWriter;
 
 //        private static final String PERSONNUMMER = "198508015461";
-private static final String PERSONNUMMER = "198404265053";
+    private static final String PERSONNUMMER = "198404265053";
 
     public static void main(String[] args) {
         System.setProperty("webdriver.chrome.driver", "/home/banken/development/libs/seleniumstuff/chromedriver");
@@ -67,7 +68,16 @@ private static final String PERSONNUMMER = "198404265053";
     private void doStuff(WebDriver driver) {
         List<Transaction> transactions = new ArrayList<>();
 //        transactions.addAll(fetchSwedbank(driver, PERSONNUMMER));
-        transactions.addAll(fetchCircleK(driver, PERSONNUMMER));
+//        transactions.addAll(fetchCircleK(driver, PERSONNUMMER));
+        String directory = "/home/banken/Downloads";
+        List<String> files = Arrays.asList(
+//                "Transaktioner_2020-11-14_14-52-00.csv"
+//                ,
+//                "Transaktioner_2020-11-14_14-52-35.csv"
+//                ,
+                "Transaktioner_2020-11-14_14-53-03.csv"
+                );
+        transactions.addAll(fetchSwedbankLocal(files.stream().map(file -> directory + "/" + file).collect(Collectors.toList()), PERSONNUMMER));
 
 
         int numberOfTransactionsFound = transactions.size();
@@ -88,6 +98,10 @@ private static final String PERSONNUMMER = "198404265053";
 
         storage.storeData(existingData);
 
+    }
+
+    List<Transaction> fetchSwedbankLocal(List<String> filename, String personnummer) {
+        return new SwedbankLocalDataParser().parse(filename);
     }
 
     private boolean isTransactionPresent(Transaction transaction, Data existingData) {
