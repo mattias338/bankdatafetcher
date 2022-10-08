@@ -4,10 +4,6 @@ import com.banken.personalbudget.Common;
 import com.banken.personalbudget.JsonFileStorage;
 import com.banken.personalbudget.Storage;
 import com.banken.personalbudget.data.Data;
-import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.BufferedWriter;
 import java.io.Closeable;
@@ -17,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,20 +33,11 @@ public class Main {
 
         main.init(closeables);
 
-        WebDriver driver = new ChromeDriver();
-        closeables.add(driver::close);
-
-        // Needed by swedbank...
-        try {
-            driver.manage().window().setSize(new Dimension(1920, 1080));
-        } catch (WebDriverException e) {
-            System.out.println("e = " + e);
-        }
 
 
 
         try {
-            main.doStuff(driver);
+            main.doStuff();
         } finally {
             closeables.forEach(closeable -> {
                 try {
@@ -65,7 +51,7 @@ public class Main {
         }
     }
 
-    private void doStuff(WebDriver driver) {
+    private void doStuff() {
         List<Transaction> transactions = new ArrayList<>();
 //        transactions.addAll(fetchSwedbank(driver, PERSONNUMMER));
 //        transactions.addAll(fetchCircleK(driver, PERSONNUMMER));
@@ -74,8 +60,9 @@ public class Main {
 //                "Transaktioner_2020-11-14_14-52-00.csv"
 //                ,
 //                "Transaktioner_2020-11-14_14-52-35.csv"
+                "Transaktioner_2022-10-07_18-55-01.csv"
 //                ,
-                "Transaktioner_2020-11-14_14-53-03.csv"
+//                "t.csv"
                 );
         transactions.addAll(fetchSwedbankLocal(files.stream().map(file -> directory + "/" + file).collect(Collectors.toList()), PERSONNUMMER));
 
@@ -102,6 +89,10 @@ public class Main {
 
     List<Transaction> fetchSwedbankLocal(List<String> filename, String personnummer) {
         return new SwedbankLocalDataParser().parse(filename);
+    }
+
+    List<Transaction> fetchCircleKLocal(String year, List<String> filename, String personnummer) {
+        return new CircleKLocalDataParser(year).parse(filename);
     }
 
     private boolean isTransactionPresent(Transaction transaction, Data existingData) {
@@ -133,79 +124,11 @@ public class Main {
         pathWithFile.getParent().toFile().mkdirs();
     }
 
-    private List<Transaction> fetchSwedbank(WebDriver driver, String personnummer) {
-        SwedbankDataFetcher swedbankDataFetcher = new SwedbankDataFetcher(driver, logWriter);
-        List<Transaction> transactions = swedbankDataFetcher.fetch(personnummer);
-        return transactions;
-    }
 
-    private List<Transaction> fetchCircleK(WebDriver driver, String personnummer) {
-        CircleKDataFetcher circleKDataFetcher = new CircleKDataFetcher(driver, logWriter);
-        List<Transaction> transactions = circleKDataFetcher.fetch(personnummer);
-        return transactions;
-    }
 
-    private void testGoogle() {
-        WebDriver driver = new ChromeDriver();
 
-        // And now use this to visit Google
-        driver.get("http://www.google.com");
-        // Alternatively the same thing can be done like this
-        // driver.navigate().to("http://www.google.com");
 
-        // Find the text input element by its name
-        WebElement element = driver.findElement(By.name("q"));
 
-        // Enter something to search for
-        element.sendKeys("Cheese!");
 
-        // Now submit the form. WebDriver will find the form for us from the element
-        element.submit();
 
-        // Check the title of the page
-        System.out.println("Page title is: " + driver.getTitle());
-
-        // Google's search is rendered dynamically with JavaScript.
-        // Wait for the page to load, timeout after 10 seconds
-        (new WebDriverWait(driver, 10)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().toLowerCase().startsWith("cheese!");
-            }
-        });
-
-        // Should see: "cheese! - Google Search"
-        System.out.println("Page title is: " + driver.getTitle());
-
-        //Close the browser
-        driver.quit();
-
-    }
-
-    private void testBankid() {
-//        WebDriver driver = new ChromeDriver();
-//
-//        driver.get("https://test.bankid.com/");
-//
-//        new WebDriverWait(driver, 4).
-////                until(ExpectedConditions.visibilityOfElementLocated(By.linkText("/Mobile/OtherDevice")));
-//                until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Test Mobile BankID")));
-//
-//
-//        WebElement link = driver.findElement(By.linkText("Test Mobile BankID"));
-//        link.click();
-//
-//        By byTestSigning = By.linkText("Test signing");
-//
-//        new WebDriverWait(driver, 4).
-//        until(ExpectedConditions.visibilityOfElementLocated(byTestSigning));
-//        driver.findElement(byTestSigning).click();
-//
-//        By byPersonnummer = By.id("Personnummer");
-//
-//        new WebDriverWait(driver, 4).
-//                until(ExpectedConditions.visibilityOfElementLocated(byPersonnummer));
-//        WebElement personnummberElement = driver.findElement(byPersonnummer);
-//        personnummberElement.sendKeys("198404265053");
-//        personnummberElement.submit();
-    }
 }

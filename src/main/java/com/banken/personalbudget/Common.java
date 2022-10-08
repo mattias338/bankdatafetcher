@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class Common {
-    private static final Path APP_PATH = Paths.get(System.getProperty("user.home"), "transactions");
+    private static final Path APP_PATH = Paths.get(System.getProperty("user.home"), "transactions", "budget");
     private static final Path DATA_PATH = APP_PATH.resolve("data.txt");
     private static final Path LOG_PATH = APP_PATH.resolve("log.txt");
 
